@@ -5,11 +5,11 @@ local track_name = "POST"
 local fx_definitions = {
   {
     name_match = "DELAY",
-    presets = { "Delay 1", "Delay 2", "Delay 3" }
+    presets = { "Basic", "Sweet Lead", "Full Ambient" }
   },
   {
     name_match = "REVERB",
-    presets = { "Large Verb", "Large Hall", "Music Club" }
+    presets = { "Basic", "Sweet Lead", "Full Ambient" }
   }
 }
 

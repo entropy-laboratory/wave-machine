@@ -1,8 +1,8 @@
--- ReaScript: Toggle FX "OCTAVER" on track 'PRE'
+-- ReaScript: Toggle FX "TS" on track 'PRE'
 -- Author: Raven Trophy
--- Description: Toggles an FX called "OCTAVER" on a specific track
+-- Description: Toggles an FX called "TS" on a specific track
 
-local TARGET_FX_NAME = "OCTAVER"  -- <- dokładna nazwa FX (case sensitive!)
+local TARGET_FX_NAME = "TS"  -- <- dokładna nazwa FX (case sensitive!)
 
 -- Szukamy tracka o nazwie 'PRE'
 local track = nil
@@ -21,7 +21,7 @@ if not track then
     return
 end
 
--- Przeglądamy wszystkie FX na torze i szukamy tego o nazwie "OCTAVER"
+-- Przeglądamy wszystkie FX na torze i szukamy tego o nazwie "TS"
 local fx_count = reaper.TrackFX_GetCount(track)
 for i = 0, fx_count - 1 do
     local _, fx_name = reaper.TrackFX_GetFXName(track, i, "")

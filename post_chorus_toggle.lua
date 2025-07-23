@@ -1,27 +1,27 @@
--- ReaScript: Toggle FX "OCTAVER" on track 'PRE'
+-- ReaScript: Toggle FX "CHORUS" on track 'POST'
 -- Author: Raven Trophy
--- Description: Toggles an FX called "OCTAVER" on a specific track
+-- Description: Toggles an FX called "CHORUS" on a specific track
 
-local TARGET_FX_NAME = "OCTAVER"  -- <- dokładna nazwa FX (case sensitive!)
+local TARGET_FX_NAME = "CHORUS"  -- <- dokładna nazwa FX (case sensitive!)
 
--- Szukamy tracka o nazwie 'PRE'
+-- Szukamy tracka o nazwie 'POST'
 local track = nil
 local track_count = reaper.CountTracks(0)
 for i = 0, track_count - 1 do
     local t = reaper.GetTrack(0, i)
     local _, name = reaper.GetSetMediaTrackInfo_String(t, "P_NAME", "", false)
-    if name == "PRE" then
+    if name == "POST" then
         track = t
         break
     end
 end
 
 if not track then
-    reaper.ShowMessageBox("Nie znaleziono tracka o nazwie 'PRE'", "Błąd", 0)
+    reaper.ShowMessageBox("Nie znaleziono tracka o nazwie 'POST'", "Błąd", 0)
     return
 end
 
--- Przeglądamy wszystkie FX na torze i szukamy tego o nazwie "OCTAVER"
+-- Przeglądamy wszystkie FX na torze i szukamy tego o nazwie "CHORUS"
 local fx_count = reaper.TrackFX_GetCount(track)
 for i = 0, fx_count - 1 do
     local _, fx_name = reaper.TrackFX_GetFXName(track, i, "")
