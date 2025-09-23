@@ -14,19 +14,11 @@ local allowed_fx_names = {
     ["COMP"] = true,
     ["EQ"] = true,
     ["PIEZZOSIM"] = true,
-    ["MULTICOMP"] = true,
-    ["VOID"] = true
+    ["MULTICOMP"] = true
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "ACOUSTIC"
-
--- FX-y do wyłączenia na ścieżce SYNTH??
-local fx_to_disable_on_synth = {
-    ["SYNTH"] = true,
-    ["VOCO"] = true,
-    ["VOID"] = true
-}
+local main_preset_name = "VOCO"
 
 -- === FUNKCJE ===
 
@@ -82,21 +74,23 @@ for i = 0, track_count - 1 do
       local fx_index = FindFXByName(track, "MAIN")
       if fx_index ~= -1 then
         reaper.TrackFX_SetPreset(track, fx_index, main_preset_name)
-        -- reaper.TrackFX_Show(track, fx_index, 3)
       end
 
     elseif is_synth then
-      -- SYNTH: zawsze mute, wyłącz wskazane FX-y
-      reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 1)
+      -- SYNTH: odmute + uruchom FX SYNTH i VOCO z presetem POLY
+      reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 0)
 
-      for i_fx = 0, reaper.TrackFX_GetCount(track) - 1 do
-        local retval, fx_name = reaper.TrackFX_GetFXName(track, i_fx, "")
-        local base_name = fx_name:match("([^%/]+)$") or fx_name
-        if fx_to_disable_on_synth[base_name] then
-          reaper.TrackFX_SetEnabled(track, i_fx, false)
-        end
+      local synth_fx_index = FindFXByName(track, "SYNTH")
+      if synth_fx_index ~= -1 then
+        reaper.TrackFX_SetEnabled(track, synth_fx_index, true)
+        reaper.TrackFX_SetPreset(track, synth_fx_index, "POLY")
       end
 
+      local voco_fx_index = FindFXByName(track, "VOCO")
+      if voco_fx_index ~= -1 then
+        reaper.TrackFX_SetEnabled(track, voco_fx_index, true)
+        reaper.TrackFX_SetPreset(track, voco_fx_index, "POLY")
+      end
     else
       -- Pozostałe: mute + wyłączenie FX-ów
       DisableAllFX(track)
@@ -104,4 +98,4 @@ for i = 0, track_count - 1 do
   end
 end
 
-reaper.Undo_EndBlock("Activate " .. TARGET_NAME .. ", disable SYNTH + others", -1)
+reaper.Undo_EndBlock("Activate " .. TARGET_NAME .. " + enable SYNTH/VOCO POLY", -1)

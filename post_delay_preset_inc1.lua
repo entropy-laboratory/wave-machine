@@ -1,7 +1,7 @@
 -- Konfiguracja
 local track_name = "POST"
 local fx_name_match = "DELAY"
-local preset_list = { "Delay 1", "Delay 2", "Delay 3" }
+local preset_list = { "Program 1", "Program 2", "Program 3" }
 
 -- Znajduje ścieżkę po nazwie
 function FindTrackByName(name)

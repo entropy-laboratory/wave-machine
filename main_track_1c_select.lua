@@ -1,32 +1,35 @@
--- Skonfiguruj prefix, który aktywujesz (np. "1", "A", "B", itd.)
+-- Skonfiguruj prefix, który aktywujesz (np. "1", "2", "A", itd.)
 local TARGET_NAME = "1"
 
--- Dozwolone prefixy/ścieżki, które będą mute-owane lub aktywowane
+-- Dozwolone prefixy lub nazwane ścieżki (mutowane jeśli nieaktywny)
 local valid_prefixes = {
     ["1"] = true, ["2"] = true, ["3"] = true, ["4"] = true,
     ["A"] = true, ["B"] = true, ["C"] = true, ["D"] = true,
     ["SYNTH"] = true
 }
 
--- FX-y do aktywacji na głównej ścieżce (np. "1")
+-- FX-y do aktywacji na głównej ścieżce (prefix "1")
 local allowed_fx_names = {
     ["MAIN"] = true,
-    ["ADDITIONAL"] = true,
-    ["VOID"] = true
+    ["COMP"] = true,
+    ["EQ"] = true,
+    ["PIEZZOSIM"] = true,
+    ["MULTICOMP"] = true,
+    ["CRYSTALLIZER"] = true
 }
 
--- Preset do załadowania w FX "MAIN"
+-- Preset do załadowania dla FX "MAIN"
 local main_preset_name = "ACOUSTIC"
 
--- SYNTH – wtyczki i presety
-local synth_fx_presets = {
-    ["SYNTH"] = "SYNTH PRESET",
-    ["VOCO"] = "CLEAN"
+-- FX-y do wyłączenia na ścieżce SYNTH
+local fx_to_disable_on_synth = {
+    ["SYNTH"] = true,
+    ["VOCO"] = true
 }
 
 -- === FUNKCJE ===
 
--- Znajdź FX po nazwie
+-- Znajdź FX po nazwie częściowej
 function FindFXByName(track, name_part)
   for i = 0, reaper.TrackFX_GetCount(track) - 1 do
     local retval, fx_name = reaper.TrackFX_GetFXName(track, i, "")
@@ -37,7 +40,7 @@ function FindFXByName(track, name_part)
   return -1
 end
 
--- Włącz tylko FX-y z listy allowed_fx_names
+-- Włącz tylko FX-y z listy
 function EnableOnlyAllowedFX(track, allowed_fx_table)
   for i = 0, reaper.TrackFX_GetCount(track) - 1 do
     local retval, fx_name = reaper.TrackFX_GetFXName(track, i, "")
@@ -47,7 +50,7 @@ function EnableOnlyAllowedFX(track, allowed_fx_table)
   end
 end
 
--- Wycisz i wyłącz FX
+-- Wyciszenie i wyłączenie wszystkich FX-ów
 function DisableAllFX(track)
   reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 1)
   for i = 0, reaper.TrackFX_GetCount(track) - 1 do
@@ -68,43 +71,53 @@ for i = 0, track_count - 1 do
   local is_valid = valid_prefixes[prefix]
   local is_target = (prefix == TARGET_NAME)
   local is_synth = (name == "SYNTH")
+  local is_post = (name == "POST")
 
   if is_valid then
-
-    -- Track o prefixie TARGET_NAME (np. "1")
     if is_target then
+      -- Aktywujemy wybrany target
       reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 0)
       EnableOnlyAllowedFX(track, allowed_fx_names)
 
       local fx_index = FindFXByName(track, "MAIN")
       if fx_index ~= -1 then
         reaper.TrackFX_SetPreset(track, fx_index, main_preset_name)
-        -- reaper.TrackFX_Show(track, fx_index, 3)
       end
 
-    -- SYNTH: tylko aktywny jeśli TARGET_NAME == "1"
     elseif is_synth then
-      local activate_synth = (TARGET_NAME == "1")  -- Zmień logikę tu, jeśli SYNTH ma działać też przy innych targetach
-
-      reaper.SetMediaTrackInfo_Value(track, "B_MUTE", activate_synth and 0 or 1)
-
+      -- SYNTH: zawsze mute, wyłącz wskazane FX-y
+      reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 1)
       for i_fx = 0, reaper.TrackFX_GetCount(track) - 1 do
         local retval, fx_name = reaper.TrackFX_GetFXName(track, i_fx, "")
         local base_name = fx_name:match("([^%/]+)$") or fx_name
-        local should_enable = activate_synth and synth_fx_presets[base_name] ~= nil
-
-        reaper.TrackFX_SetEnabled(track, i_fx, should_enable)
-
-        if should_enable then
-          reaper.TrackFX_SetPreset(track, i_fx, synth_fx_presets[base_name])
+        if fx_to_disable_on_synth[base_name] then
+          reaper.TrackFX_SetEnabled(track, i_fx, false)
         end
       end
-
-    -- Pozostałe ścieżki – wycisz i wyłącz FX-y
     else
+      -- Pozostałe: mute + wyłączenie FX-ów
       DisableAllFX(track)
     end
   end
+
+--   -- Jeśli to jest ścieżka POST → włącz CRYSTALLIZER z presetem EMERALDS
+--   if is_post then
+--     local cryst_index = FindFXByName(track, "CRYSTALLIZER")
+--     if cryst_index ~= -1 then
+--       reaper.TrackFX_SetEnabled(track, cryst_index, true)
+--       reaper.TrackFX_SetPreset(track, cryst_index, "EMERALDS")
+--     end
+--   end
 end
 
-reaper.Undo_EndBlock("Smart activate " .. TARGET_NAME .. " + SYNTH logic", -1)
+-- Funkcja do wysyłania MIDI CC
+function SendMIDI_CC(channel, cc, value)
+  local midiOutDev = 0 -- ustaw numer portu MIDI
+  local status = 0xB0 + (channel - 1)
+  reaper.StuffMIDIMessage(midiOutDev, status, cc, value)
+end
+
+-- Przełącz na stronę 2 (np. dla Track A)
+SendMIDI_CC(4, 0, 1)
+
+reaper.Undo_EndBlock("Activate " .. TARGET_NAME .. ", disable SYNTH + enable CRYSTALLIZER on POST", -1)

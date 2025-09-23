@@ -11,8 +11,7 @@ local valid_prefixes = {
 -- FX-y do aktywacji na głównej ścieżce (prefix "2")
 local allowed_fx_names = {
     ["MAIN"] = true,
-    ["ADDITIONAL"] = true,
-    ["VOID"] = true
+    ["ADDITIONAL"] = true
 }
 
 -- Preset do załadowania dla FX "MAIN"
@@ -21,8 +20,7 @@ local main_preset_name = "SECONDARY"
 -- FX-y do wyłączenia na ścieżce SYNTH
 local fx_to_disable_on_synth = {
     ["SYNTH"] = true,
-    ["VOCO"] = true,
-    ["VOID"] = true
+    ["VOCO"] = true
 }
 
 -- === FUNKCJE ===
@@ -79,7 +77,7 @@ for i = 0, track_count - 1 do
       local fx_index = FindFXByName(track, "MAIN")
       if fx_index ~= -1 then
         reaper.TrackFX_SetPreset(track, fx_index, main_preset_name)
-        reaper.TrackFX_Show(track, fx_index, 3)
+        -- reaper.TrackFX_Show(track, fx_index, 3)
       end
 
     elseif is_synth then

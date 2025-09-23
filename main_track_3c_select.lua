@@ -8,16 +8,16 @@ local valid_prefixes = {
     ["SYNTH"] = true
 }
 
--- FX-y do aktywacji na głównej ścieżce (prefix "1")
+-- FX-y do aktywacji na głównej ścieżce (prefix "2")
 local allowed_fx_names = {
     ["MAIN"] = true,
     ["ADDITIONAL"] = true
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "PRIMARY"
+local main_preset_name = "SECONDARY"
 
--- FX-y do wyłączenia na ścieżce SYNTH??
+-- FX-y do wyłączenia na ścieżce SYNTH
 local fx_to_disable_on_synth = {
     ["SYNTH"] = true,
     ["VOCO"] = true
@@ -77,13 +77,21 @@ for i = 0, track_count - 1 do
       local fx_index = FindFXByName(track, "MAIN")
       if fx_index ~= -1 then
         reaper.TrackFX_SetPreset(track, fx_index, main_preset_name)
-        -- reaper.TrackFX_Show(track, fx_index, 3)
+        reaper.TrackFX_Show(track, fx_index, 3)
       end
 
     elseif is_synth then
-      -- SYNTH: zawsze mute, wyłącz wskazane FX-y
-      reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 1)
+      -- SYNTH: odmutowany + preset + dezaktywacja wybranych FX
+      reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 0)
 
+      -- Ustaw preset SYNTH
+      local fx_index = FindFXByName(track, "SYNTH")
+      if fx_index ~= -1 then
+        reaper.TrackFX_SetPreset(track, fx_index, "LEAD SYNTH")
+        -- reaper.TrackFX_Show(track, fx_index, 3)
+      end
+
+      -- Dezaktywuj wybrane FX-y
       for i_fx = 0, reaper.TrackFX_GetCount(track) - 1 do
         local retval, fx_name = reaper.TrackFX_GetFXName(track, i_fx, "")
         local base_name = fx_name:match("([^%/]+)$") or fx_name
@@ -91,6 +99,7 @@ for i = 0, track_count - 1 do
           reaper.TrackFX_SetEnabled(track, i_fx, false)
         end
       end
+
 
     else
       -- Pozostałe: mute + wyłączenie FX-ów

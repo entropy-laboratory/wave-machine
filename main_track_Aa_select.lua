@@ -10,10 +10,10 @@ local valid_prefixes = {
 
 -- FX-y do aktywacji na głównej ścieżce (prefix "1")
 local allowed_fx_names = {
+    -- ["COMP"] = true,
     ["MAIN"] = true,
-    ["ADDITIONAL"] = true,
-    ["VOID"] = true
-}
+    ["ADDITIONAL"] = true
+  }
 
 -- Preset do załadowania dla FX "MAIN"
 local main_preset_name = "SUNRISE CLEAN"
@@ -21,8 +21,7 @@ local main_preset_name = "SUNRISE CLEAN"
 -- FX-y do wyłączenia na ścieżce SYNTH??
 local fx_to_disable_on_synth = {
     ["SYNTH"] = true,
-    ["VOCO"] = true,
-    ["VOID"] = true
+    ["VOCO"] = true
 }
 
 -- === FUNKCJE ===

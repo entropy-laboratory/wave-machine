@@ -14,8 +14,7 @@ local allowed_fx_names = {
     ["COMP"] = true,
     ["EQ"] = true,
     ["PIEZZOSIM"] = true,
-    ["MULTICOMP"] = true,
-    ["VOID"] = true
+    ["MULTICOMP"] = true
 }
 
 -- Preset do załadowania dla FX "MAIN"
@@ -24,8 +23,7 @@ local main_preset_name = "ACOUSTIC"
 -- FX-y do wyłączenia na ścieżce SYNTH??
 local fx_to_disable_on_synth = {
     ["SYNTH"] = true,
-    ["VOCO"] = true,
-    ["VOID"] = true
+    ["VOCO"] = true
 }
 
 -- === FUNKCJE ===
@@ -104,4 +102,16 @@ for i = 0, track_count - 1 do
   end
 end
 
+-- Funkcja do wysyłania MIDI CC
+function SendMIDI_CC(channel, cc, value)
+  local midiOutDev = 0 -- ustaw numer portu MIDI (np. TouchOSC Bridge)
+  local status = 0xB0 + (channel - 1)
+  reaper.StuffMIDIMessage(midiOutDev, status, cc, value)
+end
+
+-- Przełącz na stronę 2 (np. dla Track A)
+SendMIDI_CC(4, 0, 1)
+
 reaper.Undo_EndBlock("Activate " .. TARGET_NAME .. ", disable SYNTH + others", -1)
+
+

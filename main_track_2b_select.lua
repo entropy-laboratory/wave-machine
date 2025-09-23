@@ -8,21 +8,20 @@ local valid_prefixes = {
     ["SYNTH"] = true
 }
 
--- FX-y do aktywacji na głównej ścieżce (prefix "2")
+-- FX-y do aktywacji na głównej ścieżce (prefix "1")
 local allowed_fx_names = {
     ["MAIN"] = true,
-    ["ADDITIONAL"] = true,
-    ["VOID"] = true
+    ["OCT"] = true,
+    ["CHORUS"] = true
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "SECONDARY"
+local main_preset_name = "SUNRISE CLEAN"
 
 -- FX-y do wyłączenia na ścieżce SYNTH
 local fx_to_disable_on_synth = {
     ["SYNTH"] = true,
-    ["VOCO"] = true,
-    ["VOID"] = true
+    ["VOCO"] = true
 }
 
 -- === FUNKCJE ===
@@ -79,20 +78,28 @@ for i = 0, track_count - 1 do
       local fx_index = FindFXByName(track, "MAIN")
       if fx_index ~= -1 then
         reaper.TrackFX_SetPreset(track, fx_index, main_preset_name)
-        reaper.TrackFX_Show(track, fx_index, 3)
+        -- reaper.TrackFX_Show(track, fx_index, 3)
       end
 
-    elseif is_synth then
-      -- SYNTH: zawsze mute, wyłącz wskazane FX-y
-      reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 1)
+      elseif is_synth then
+        -- SYNTH: aktywacja, odmute, aktywacja FX i preset
+        reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 0)
 
-      for i_fx = 0, reaper.TrackFX_GetCount(track) - 1 do
-        local retval, fx_name = reaper.TrackFX_GetFXName(track, i_fx, "")
-        local base_name = fx_name:match("([^%/]+)$") or fx_name
-        if fx_to_disable_on_synth[base_name] then
-          reaper.TrackFX_SetEnabled(track, i_fx, false)
+        for i_fx = 0, reaper.TrackFX_GetCount(track) - 1 do
+          local retval, fx_name = reaper.TrackFX_GetFXName(track, i_fx, "")
+          local base_name = fx_name:match("([^%/]+)$") or fx_name
+          if fx_to_disable_on_synth[base_name] then
+            reaper.TrackFX_SetEnabled(track, i_fx, false)
+          end
         end
-      end
+
+        -- Znajdź FX "SYNTH" i ustaw preset "RHYTM SYNTH"
+        local synth_fx_index = FindFXByName(track, "SYNTH")
+        if synth_fx_index ~= -1 then
+          reaper.TrackFX_SetEnabled(track, synth_fx_index, true)
+          reaper.TrackFX_SetPreset(track, synth_fx_index, "ARP SYNTH")
+        end
+
 
     else
       -- Pozostałe: mute + wyłączenie FX-ów

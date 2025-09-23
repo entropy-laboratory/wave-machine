@@ -11,18 +11,16 @@ local valid_prefixes = {
 -- FX-y do aktywacji na głównej ścieżce
 local allowed_fx_names = {
     ["MAIN"] = true,
-    ["ADDITIONAL"] = true,
-    ["VOID"] = true
+    ["COMP"] = true
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "SECONDARY"
+local main_preset_name = "LEAD 2"
 
 -- FX-y do wyłączenia na ścieżce SYNTH (jeśli nie C)
 local fx_to_disable_on_synth = {
     ["SYNTH"] = true,
-    ["VOCO"] = true,
-    ["VOID"] = true
+    ["VOCO"] = true
 }
 
 -- Specjalne ustawienia SYNTH, jeśli TARGET_NAME == "C"
