@@ -1,3 +1,5 @@
+-- == 1 : PIEZZO || VOCODEX || BCAA == --
+
 -- Skonfiguruj prefix, który aktywujesz (np. "1", "2", "A", itd.)
 local TARGET_NAME = "1"
 
@@ -18,7 +20,7 @@ local allowed_fx_names = {
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "ACOUSTIC"
+local main_preset_name = "PIEZZO"
 
 -- FX-y do wyłączenia na ścieżce SYNTH??
 local fx_to_disable_on_synth = {

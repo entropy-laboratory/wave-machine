@@ -1,5 +1,3 @@
--- == B : RH / CR  1 // 2 || + SYNTH  == --
-
 -- Skonfiguruj prefix, który aktywujesz (np. "1", "2", "A", itd.)
 local TARGET_NAME = "B"
 
@@ -13,11 +11,11 @@ local valid_prefixes = {
 -- FX-y do aktywacji na głównej ścieżce (prefix "1")
 local allowed_fx_names = {
     ["MAIN"] = true,
-    ["ADDITIONAL"] = true
+    ["DOUBLER"] = true
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "RHYTM / CRUNCH 1"
+local main_preset_name = "RHYTM / CRUNCH 2"
 
 -- FX-y do wyłączenia na ścieżce SYNTH??
 local fx_to_disable_on_synth = {

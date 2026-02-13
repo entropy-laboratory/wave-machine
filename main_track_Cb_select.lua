@@ -1,3 +1,5 @@
+-- == C : LEAD || SYNTHLEAD  == --
+
 -- Skonfiguruj prefix, który aktywujesz (np. "1", "2", "A", itd.)
 local TARGET_NAME = "C"
 
@@ -15,7 +17,7 @@ local allowed_fx_names = {
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "LEAD 2"
+local main_preset_name = "LEAD"
 
 -- FX-y do wyłączenia na ścieżce SYNTH (jeśli nie C)
 local fx_to_disable_on_synth = {

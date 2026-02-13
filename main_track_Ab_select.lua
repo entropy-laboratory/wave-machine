@@ -1,3 +1,5 @@
+-- == A : CLEAN || DIRT  == --
+
 -- Skonfiguruj prefix, który aktywujesz (np. "1", "2", "A", itd.)
 local TARGET_NAME = "A"
 

@@ -1,3 +1,5 @@
+-- == B : RH / CR  1 // 2 || + SYNTH  == --
+
 -- Skonfiguruj prefix, który aktywujesz (np. "1", "2", "A", itd.)
 local TARGET_NAME = "B"
 

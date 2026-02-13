@@ -1,3 +1,5 @@
+-- == 4 :  PURESYNTH 1 // 2 == --
+
 -- Skrypt: Aktywuj tylko SYNTH z presetem "PURESYNTH 1"
 
 -- Prefixy do wyciszenia
