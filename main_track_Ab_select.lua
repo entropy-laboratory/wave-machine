@@ -28,13 +28,19 @@ local fx_to_disable_on_synth = {
 -- === FUNKCJE ===
 
 -- Znajdź FX po nazwie częściowej
-function FindFXByName(track, name_part)
+function FindActiveMainFX(track)
   for i = 0, reaper.TrackFX_GetCount(track) - 1 do
     local retval, fx_name = reaper.TrackFX_GetFXName(track, i, "")
-    if retval and fx_name:match(name_part) then
-      return i
+
+    if retval and (fx_name:find("MAIN") or fx_name:find("'MAIN")) then
+      local enabled = reaper.TrackFX_GetEnabled(track, i)
+
+      if enabled then
+        return i
+      end
     end
   end
+
   return -1
 end
 
@@ -76,7 +82,7 @@ for i = 0, track_count - 1 do
       reaper.SetMediaTrackInfo_Value(track, "B_MUTE", 0)
       EnableOnlyAllowedFX(track, allowed_fx_names)
 
-      local fx_index = FindFXByName(track, "MAIN")
+      local fx_index = FindActiveMainFX(track)
       if fx_index ~= -1 then
         reaper.TrackFX_SetPreset(track, fx_index, main_preset_name)
         -- reaper.TrackFX_Show(track, fx_index, 3)

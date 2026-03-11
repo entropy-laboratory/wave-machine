@@ -18,7 +18,7 @@ local allowed_fx_names = {
 }
 
 -- Preset do załadowania dla FX "MAIN"
-local main_preset_name = "SUNRISE CLEAN"
+local main_preset_name = "RHYTMIC SYNTH 2"
 
 -- FX-y do wyłączenia na ścieżce SYNTH
 local fx_to_disable_on_synth = {
